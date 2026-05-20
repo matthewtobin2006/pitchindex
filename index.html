@@ -267,6 +267,21 @@ body::before {
   .facts-grid { grid-template-columns:repeat(2,1fr); }
   .wcp-title { font-size:42px; }
 }
+
+/* WC Players */
+.wc-players-grid { display:flex; flex-direction:column; gap:6px; }
+.wc-player-row {
+  display:flex; align-items:center; gap:10px; padding:8px 12px;
+  background:var(--surface2); border:1px solid var(--border); border-radius:5px;
+}
+.wc-player-flag { font-size:18px; flex-shrink:0; line-height:1; }
+.wc-player-name { font-size:13px; font-weight:500; flex:1; }
+.wc-player-nation { font-size:10px; color:var(--muted); font-weight:500; }
+.wc-player-pos {
+  font-size:9px; font-weight:700; letter-spacing:0.12em;
+  padding:3px 7px; border-radius:3px;
+  background:rgba(0,212,170,0.12); border:1px solid rgba(0,212,170,0.25); color:var(--accent);
+}
 </style>
 </head>
 <body>
@@ -649,6 +664,306 @@ const WC_GROUPS = [
 /* ══════════════════════════════════════════════════════
    RENDERING
 ══════════════════════════════════════════════════════ */
+const WC_PLAYERS = {
+  'arsenal': [
+  {name:'Bukayo Saka',nation:'England',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',pos:'RW'},
+  {name:'Declan Rice',nation:'England',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',pos:'CM'},
+  {name:'Ben White',nation:'England',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',pos:'RB'},
+  {name:'Martin Ødegaard',nation:'Norway',flag:'🇳🇴',pos:'CAM'},
+  {name:'Gabriel Magalhães',nation:'Brazil',flag:'🇧🇷',pos:'CB'},
+  {name:'Gabriel Martinelli',nation:'Brazil',flag:'🇧🇷',pos:'LW'}
+  ],
+  'liverpool': [
+  {name:'Mohamed Salah',nation:'Egypt',flag:'🇪🇬',pos:'RW'},
+  {name:'Trent Alexander-Arnold',nation:'England',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',pos:'RB'},
+  {name:'Virgil van Dijk',nation:'Netherlands',flag:'🇳🇱',pos:'CB'},
+  {name:'Darwin Núñez',nation:'Uruguay',flag:'🇺🇾',pos:'ST'},
+  {name:'Alexis Mac Allister',nation:'Argentina',flag:'🇦🇷',pos:'CM'},
+  {name:'Luis Díaz',nation:'Colombia',flag:'🇨🇴',pos:'LW'},
+  {name:'Cody Gakpo',nation:'Netherlands',flag:'🇳🇱',pos:'LW'},
+  {name:'Wataru Endō',nation:'Japan',flag:'🇯🇵',pos:'CM'}
+  ],
+  'mancity': [
+  {name:'Erling Haaland',nation:'Norway',flag:'🇳🇴',pos:'ST'},
+  {name:'Kevin De Bruyne',nation:'Belgium',flag:'🇧🇪',pos:'CM'},
+  {name:'Phil Foden',nation:'England',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',pos:'CAM'},
+  {name:'Bernardo Silva',nation:'Portugal',flag:'🇵🇹',pos:'CM'},
+  {name:'Rúben Dias',nation:'Portugal',flag:'🇵🇹',pos:'CB'},
+  {name:'Ederson',nation:'Brazil',flag:'🇧🇷',pos:'GK'},
+  {name:'Rodri',nation:'Spain',flag:'🇪🇸',pos:'CDM'},
+  {name:'Jérémy Doku',nation:'Belgium',flag:'🇧🇪',pos:'LW'}
+  ],
+  'manutd': [
+  {name:'Bruno Fernandes',nation:'Portugal',flag:'🇵🇹',pos:'CAM'},
+  {name:'Lisandro Martínez',nation:'Argentina',flag:'🇦🇷',pos:'CB'},
+  {name:'Kobbie Mainoo',nation:'England',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',pos:'CM'},
+  {name:'Rasmus Højlund',nation:'Denmark',flag:'🇩🇰',pos:'ST'},
+  {name:'André Onana',nation:'Cameroon',flag:'🇨🇲',pos:'GK'},
+  {name:'Noussair Mazraoui',nation:'Morocco',flag:'🇲🇦',pos:'RB'}
+  ],
+  'chelsea': [
+  {name:'Reece James',nation:'England',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',pos:'RB'},
+  {name:'Cole Palmer',nation:'England',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',pos:'CAM'},
+  {name:'Enzo Fernández',nation:'Argentina',flag:'🇦🇷',pos:'CM'},
+  {name:'Nicolas Jackson',nation:'Senegal',flag:'🇸🇳',pos:'ST'},
+  {name:'Moisés Caicedo',nation:'Ecuador',flag:'🇪🇨',pos:'CDM'},
+  {name:'Levi Colwill',nation:'England',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',pos:'CB'}
+  ],
+  'tottenham': [
+  {name:'Heung-min Son',nation:'South Korea',flag:'🇰🇷',pos:'LW'},
+  {name:'Pape Matar Sarr',nation:'Senegal',flag:'🇸🇳',pos:'CM'},
+  {name:'Guglielmo Vicario',nation:'Italy',flag:'🇮🇹',pos:'GK'},
+  {name:'Destiny Udogie',nation:'Italy',flag:'🇮🇹',pos:'LB'},
+  {name:'Brennan Johnson',nation:'Wales',flag:'🏴󠁧󠁢󠁷󠁬󠁳󠁿',pos:'RW'}
+  ],
+  'aston': [
+  {name:'Ollie Watkins',nation:'England',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',pos:'ST'},
+  {name:'John McGinn',nation:'Scotland',flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿',pos:'CM'},
+  {name:'Emiliano Martínez',nation:'Argentina',flag:'🇦🇷',pos:'GK'},
+  {name:'Pau Torres',nation:'Spain',flag:'🇪🇸',pos:'CB'},
+  {name:'Leon Bailey',nation:'Jamaica',flag:'🇯🇲',pos:'RW'},
+  {name:'Moussa Diaby',nation:'France',flag:'🇫🇷',pos:'LW'}
+  ],
+  'newcastle': [
+  {name:'Alexander Isak',nation:'Sweden',flag:'🇸🇪',pos:'ST'},
+  {name:'Bruno Guimarães',nation:'Brazil',flag:'🇧🇷',pos:'CM'},
+  {name:'Fabian Schär',nation:'Switzerland',flag:'🇨🇭',pos:'CB'},
+  {name:'Kieran Trippier',nation:'England',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',pos:'RB'},
+  {name:'Anthony Gordon',nation:'England',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',pos:'LW'}
+  ],
+  'brighton': [
+  {name:'Kaoru Mitoma',nation:'Japan',flag:'🇯🇵',pos:'LW'},
+  {name:'Joël Veltman',nation:'Netherlands',flag:'🇳🇱',pos:'RB'},
+  {name:'Jan Paul van Hecke',nation:'Netherlands',flag:'🇳🇱',pos:'CB'},
+  {name:'Pascal Groß',nation:'Germany',flag:'🇩🇪',pos:'CM'},
+  {name:'Pervis Estupiñán',nation:'Ecuador',flag:'🇪🇨',pos:'LB'}
+  ],
+  'west_ham': [
+  {name:'Jarrod Bowen',nation:'England',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',pos:'RW'},
+  {name:'Lucas Paquetá',nation:'Brazil',flag:'🇧🇷',pos:'CM'},
+  {name:'Edson Álvarez',nation:'Mexico',flag:'🇲🇽',pos:'CDM'},
+  {name:'Mohammed Kudus',nation:'Ghana',flag:'🇬🇭',pos:'CAM'},
+  {name:'Nayef Aguerd',nation:'Morocco',flag:'🇲🇦',pos:'CB'}
+  ],
+  'realmadrid': [
+  {name:'Vinícius Jr.',nation:'Brazil',flag:'🇧🇷',pos:'LW'},
+  {name:'Rodrygo',nation:'Brazil',flag:'🇧🇷',pos:'RW'},
+  {name:'Federico Valverde',nation:'Uruguay',flag:'🇺🇾',pos:'CM'},
+  {name:'Luka Modrić',nation:'Croatia',flag:'🇭🇷',pos:'CM'},
+  {name:'Aurélien Tchouaméni',nation:'France',flag:'🇫🇷',pos:'CDM'},
+  {name:'Eduardo Camavinga',nation:'France',flag:'🇫🇷',pos:'CM'},
+  {name:'Kylian Mbappé',nation:'France',flag:'🇫🇷',pos:'ST'},
+  {name:'Éder Militão',nation:'Brazil',flag:'🇧🇷',pos:'CB'},
+  {name:'Dani Carvajal',nation:'Spain',flag:'🇪🇸',pos:'RB'},
+  {name:'Andriy Lunin',nation:'Ukraine',flag:'🇺🇦',pos:'GK'}
+  ],
+  'barcelona': [
+  {name:'Lamine Yamal',nation:'Spain',flag:'🇪🇸',pos:'RW'},
+  {name:'Pedri',nation:'Spain',flag:'🇪🇸',pos:'CM'},
+  {name:'Gavi',nation:'Spain',flag:'🇪🇸',pos:'CM'},
+  {name:'Alejandro Balde',nation:'Spain',flag:'🇪🇸',pos:'LB'},
+  {name:'Ronald Araújo',nation:'Uruguay',flag:'🇺🇾',pos:'CB'},
+  {name:'Raphinha',nation:'Brazil',flag:'🇧🇷',pos:'RW'},
+  {name:'Fermín López',nation:'Spain',flag:'🇪🇸',pos:'CM'}
+  ],
+  'atletico': [
+  {name:'Antoine Griezmann',nation:'France',flag:'🇫🇷',pos:'CAM'},
+  {name:'Álvaro Morata',nation:'Spain',flag:'🇪🇸',pos:'ST'},
+  {name:'Marcos Llorente',nation:'Spain',flag:'🇪🇸',pos:'CM'},
+  {name:'Jan Oblak',nation:'Slovenia',flag:'🇸🇮',pos:'GK'},
+  {name:'José María Giménez',nation:'Uruguay',flag:'🇺🇾',pos:'CB'},
+  {name:'Nahuel Molina',nation:'Argentina',flag:'🇦🇷',pos:'RB'}
+  ],
+  'sevilla': [
+  {name:'Youssef En-Nesyri',nation:'Morocco',flag:'🇲🇦',pos:'ST'},
+  {name:'Marcos Acuña',nation:'Argentina',flag:'🇦🇷',pos:'LB'},
+  {name:'Loïc Badé',nation:'France',flag:'🇫🇷',pos:'CB'}
+  ],
+  'villarreal': [
+  {name:'Álex Baena',nation:'Spain',flag:'🇪🇸',pos:'CAM'},
+  {name:'Dani Parejo',nation:'Spain',flag:'🇪🇸',pos:'CM'},
+  {name:'Yerlan Salmović',nation:'Sweden',flag:'🇸🇪',pos:'LW'}
+  ],
+  'athletic': [
+  {name:'Nico Williams',nation:'Spain',flag:'🇪🇸',pos:'LW'},
+  {name:'Oihan Sancet',nation:'Spain',flag:'🇪🇸',pos:'CM'},
+  {name:'Unai Simón',nation:'Spain',flag:'🇪🇸',pos:'GK'},
+  {name:'Iñaki Williams',nation:'Ghana',flag:'🇬🇭',pos:'ST'}
+  ],
+  'bayern': [
+  {name:'Manuel Neuer',nation:'Germany',flag:'🇩🇪',pos:'GK'},
+  {name:'Joshua Kimmich',nation:'Germany',flag:'🇩🇪',pos:'CM'},
+  {name:'Jamal Musiala',nation:'Germany',flag:'🇩🇪',pos:'CAM'},
+  {name:'Leroy Sané',nation:'Germany',flag:'🇩🇪',pos:'RW'},
+  {name:'Serge Gnabry',nation:'Germany',flag:'🇩🇪',pos:'RW'},
+  {name:'Thomas Müller',nation:'Germany',flag:'🇩🇪',pos:'SS'},
+  {name:'Harry Kane',nation:'England',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',pos:'ST'},
+  {name:'Dayot Upamecano',nation:'France',flag:'🇫🇷',pos:'CB'},
+  {name:'Alphonso Davies',nation:'Canada',flag:'🇨🇦',pos:'LB'},
+  {name:'Min-jae Kim',nation:'South Korea',flag:'🇰🇷',pos:'CB'}
+  ],
+  'dortmund': [
+  {name:'Karim Adeyemi',nation:'Germany',flag:'🇩🇪',pos:'LW'},
+  {name:'Julian Brandt',nation:'Germany',flag:'🇩🇪',pos:'CAM'},
+  {name:'Emre Can',nation:'Germany',flag:'🇩🇪',pos:'CM'},
+  {name:'Nico Schlotterbeck',nation:'Germany',flag:'🇩🇪',pos:'CB'},
+  {name:'Gregor Kobel',nation:'Switzerland',flag:'🇨🇭',pos:'GK'},
+  {name:'Sébastien Haller',nation:'Ivory Coast',flag:'🇨🇮',pos:'ST'},
+  {name:'Donyell Malen',nation:'Netherlands',flag:'🇳🇱',pos:'RW'}
+  ],
+  'leverkusen': [
+  {name:'Florian Wirtz',nation:'Germany',flag:'🇩🇪',pos:'CAM'},
+  {name:'Granit Xhaka',nation:'Switzerland',flag:'🇨🇭',pos:'CM'},
+  {name:'Jonathan Tah',nation:'Germany',flag:'🇩🇪',pos:'CB'},
+  {name:'Alejandro Grimaldo',nation:'Spain',flag:'🇪🇸',pos:'LB'},
+  {name:'Exequiel Palacios',nation:'Argentina',flag:'🇦🇷',pos:'CM'},
+  {name:'Victor Boniface',nation:'Nigeria',flag:'🇳🇬',pos:'ST'}
+  ],
+  'rb_leipzig': [
+  {name:'Xavi Simons',nation:'Netherlands',flag:'🇳🇱',pos:'CAM'},
+  {name:'Benjamin Šeško',nation:'Slovenia',flag:'🇸🇮',pos:'ST'},
+  {name:'Willi Orbán',nation:'Hungary',flag:'🇭🇺',pos:'CB'},
+  {name:'Castello Lukeba',nation:'France',flag:'🇫🇷',pos:'CB'},
+  {name:'Lois Openda',nation:'Belgium',flag:'🇧🇪',pos:'ST'}
+  ],
+  'frankfurt': [
+  {name:'Ansgar Knauff',nation:'Germany',flag:'🇩🇪',pos:'RW'},
+  {name:'Hugo Ekitike',nation:'France',flag:'🇫🇷',pos:'ST'},
+  {name:'Omar Marmoush',nation:'Egypt',flag:'🇪🇬',pos:'CAM'},
+  {name:'Ellyes Skhiri',nation:'Tunisia',flag:'🇹🇳',pos:'CM'}
+  ],
+  'gladbach': [
+  {name:'Alassane Pléa',nation:'France',flag:'🇫🇷',pos:'ST'},
+  {name:'Ko Itakura',nation:'Japan',flag:'🇯🇵',pos:'CB'},
+  {name:'Nico Elvedi',nation:'Switzerland',flag:'🇨🇭',pos:'CB'}
+  ],
+  'juventus': [
+  {name:'Federico Chiesa',nation:'Italy',flag:'🇮🇹',pos:'RW'},
+  {name:'Federico Gatti',nation:'Italy',flag:'🇮🇹',pos:'CB'},
+  {name:'Nicolò Fagioli',nation:'Italy',flag:'🇮🇹',pos:'CM'},
+  {name:'Dušan Vlahović',nation:'Serbia',flag:'🇷🇸',pos:'ST'},
+  {name:'Weston McKennie',nation:'USA',flag:'🇺🇸',pos:'CM'},
+  {name:'Timothy Weah',nation:'USA',flag:'🇺🇸',pos:'RW'},
+  {name:'Gleison Bremer',nation:'Brazil',flag:'🇧🇷',pos:'CB'}
+  ],
+  'intermilan': [
+  {name:'Lautaro Martínez',nation:'Argentina',flag:'🇦🇷',pos:'ST'},
+  {name:'Nicolò Barella',nation:'Italy',flag:'🇮🇹',pos:'CM'},
+  {name:'Alessandro Bastoni',nation:'Italy',flag:'🇮🇹',pos:'CB'},
+  {name:'Federico Dimarco',nation:'Italy',flag:'🇮🇹',pos:'LB'},
+  {name:'Mehdi Taremi',nation:'Iran',flag:'🇮🇷',pos:'ST'},
+  {name:'Marcus Thuram',nation:'France',flag:'🇫🇷',pos:'ST'},
+  {name:'Hakan Çalhanoğlu',nation:'Turkey',flag:'🇹🇷',pos:'CDM'}
+  ],
+  'acmilan': [
+  {name:'Mike Maignan',nation:'France',flag:'🇫🇷',pos:'GK'},
+  {name:'Theo Hernández',nation:'France',flag:'🇫🇷',pos:'LB'},
+  {name:'Rafael Leão',nation:'Portugal',flag:'🇵🇹',pos:'LW'},
+  {name:'Christian Pulisic',nation:'USA',flag:'🇺🇸',pos:'RW'},
+  {name:'Tijjani Reijnders',nation:'Netherlands',flag:'🇳🇱',pos:'CM'},
+  {name:'Ruben Loftus-Cheek',nation:'England',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',pos:'CM'}
+  ],
+  'napoli': [
+  {name:'Giovanni Di Lorenzo',nation:'Italy',flag:'🇮🇹',pos:'RB'},
+  {name:'Khvicha Kvaratskhelia',nation:'Georgia',flag:'🇬🇪',pos:'LW'},
+  {name:'Victor Osimhen',nation:'Nigeria',flag:'🇳🇬',pos:'ST'},
+  {name:'André-Frank Zambo Anguissa',nation:'Cameroon',flag:'🇨🇲',pos:'CM'},
+  {name:'Mathías Olivera',nation:'Uruguay',flag:'🇺🇾',pos:'LB'}
+  ],
+  'roma': [
+  {name:'Paulo Dybala',nation:'Argentina',flag:'🇦🇷',pos:'CAM'},
+  {name:'Lorenzo Pellegrini',nation:'Italy',flag:'🇮🇹',pos:'CM'},
+  {name:'Gianluca Mancini',nation:'Italy',flag:'🇮🇹',pos:'CB'},
+  {name:'Bryan Cristante',nation:'Italy',flag:'🇮🇹',pos:'CM'}
+  ],
+  'lazio': [
+  {name:'Mattia Zaccagni',nation:'Italy',flag:'🇮🇹',pos:'LW'},
+  {name:'Nicolò Rovella',nation:'Italy',flag:'🇮🇹',pos:'CM'},
+  {name:'Alessio Romagnoli',nation:'Italy',flag:'🇮🇹',pos:'CB'},
+  {name:'Daichi Kamada',nation:'Japan',flag:'🇯🇵',pos:'CAM'},
+  {name:'Gustav Isaksen',nation:'Denmark',flag:'🇩🇰',pos:'RW'}
+  ],
+  'psg': [
+  {name:'Ousmane Dembélé',nation:'France',flag:'🇫🇷',pos:'RW'},
+  {name:'Marquinhos',nation:'Brazil',flag:'🇧🇷',pos:'CB'},
+  {name:'Achraf Hakimi',nation:'Morocco',flag:'🇲🇦',pos:'RB'},
+  {name:'Vitinha',nation:'Portugal',flag:'🇵🇹',pos:'CM'},
+  {name:'Warren Zaïre-Emery',nation:'France',flag:'🇫🇷',pos:'CM'},
+  {name:'Bradley Barcola',nation:'France',flag:'🇫🇷',pos:'LW'},
+  {name:'Gonçalo Ramos',nation:'Portugal',flag:'🇵🇹',pos:'ST'}
+  ],
+  'marseille': [
+  {name:'Chancel Mbemba',nation:'Congo DR',flag:'🇨🇩',pos:'CB'},
+  {name:'Azzedine Ounahi',nation:'Morocco',flag:'🇲🇦',pos:'CM'},
+  {name:'Pierre-Emile Højbjerg',nation:'Denmark',flag:'🇩🇰',pos:'CDM'},
+  {name:'Iliman Ndiaye',nation:'Senegal',flag:'🇸🇳',pos:'CAM'}
+  ],
+  'lyon': [
+  {name:'Alexandre Lacazette',nation:'France',flag:'🇫🇷',pos:'ST'},
+  {name:'Rayan Cherki',nation:'France',flag:'🇫🇷',pos:'CAM'},
+  {name:'Ainsley Maitland-Niles',nation:'England',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',pos:'CM'},
+  {name:'Gift Orban',nation:'Nigeria',flag:'🇳🇬',pos:'ST'}
+  ],
+  'monaco': [
+  {name:'Wissam Ben Yedder',nation:'France',flag:'🇫🇷',pos:'ST'},
+  {name:'Aleksandr Golovin',nation:'Russia',flag:'🇷🇺',pos:'CAM'},
+  {name:'Takumi Minamino',nation:'Japan',flag:'🇯🇵',pos:'LW'}
+  ],
+  'nice': [
+  {name:'Hicham Boudaoui',nation:'Algeria',flag:'🇩🇿',pos:'CM'},
+  {name:'Sofiane Diop',nation:'France',flag:'🇫🇷',pos:'CAM'},
+  {name:'Evann Guessand',nation:'France',flag:'🇫🇷',pos:'ST'}
+  ],
+  'lille': [
+  {name:'Jonathan David',nation:'Canada',flag:'🇨🇦',pos:'ST'},
+  {name:'Leny Yoro',nation:'France',flag:'🇫🇷',pos:'CB'},
+  {name:'Angel Gomes',nation:'England',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',pos:'CM'},
+  {name:'Rémy Cabella',nation:'France',flag:'🇫🇷',pos:'CAM'}
+  ],
+  'lafc': [
+  {name:'Giorgio Chiellini',nation:'Italy',flag:'🇮🇹',pos:'CB'},
+  {name:'Denis Bouanga',nation:'Gabon',flag:'🇬🇦',pos:'LW'},
+  {name:'Hugo Lloris',nation:'France',flag:'🇫🇷',pos:'GK'},
+  {name:'Riqui Puig',nation:'Spain',flag:'🇪🇸',pos:'CAM'},
+  {name:'Cucho Hernández',nation:'Colombia',flag:'🇨🇴',pos:'ST'}
+  ],
+  'inter_miami': [
+  {name:'Lionel Messi',nation:'Argentina',flag:'🇦🇷',pos:'RW'},
+  {name:'Sergio Busquets',nation:'Spain',flag:'🇪🇸',pos:'CDM'},
+  {name:'Jordi Alba',nation:'Spain',flag:'🇪🇸',pos:'LB'},
+  {name:'Luis Suárez',nation:'Uruguay',flag:'🇺🇾',pos:'ST'},
+  {name:'DeAndre Yedlin',nation:'USA',flag:'🇺🇸',pos:'RB'}
+  ],
+  'atlanta': [
+  {name:'Thiago Almada',nation:'Argentina',flag:'🇦🇷',pos:'CAM'},
+  {name:'Brad Guzan',nation:'USA',flag:'🇺🇸',pos:'GK'},
+  {name:'Caleb Wiley',nation:'USA',flag:'🇺🇸',pos:'LB'}
+  ],
+  'seattle': [
+  {name:'Jordan Morris',nation:'USA',flag:'🇺🇸',pos:'LW'},
+  {name:'Raúl Ruidíaz',nation:'Peru',flag:'🇵🇪',pos:'ST'},
+  {name:'Cristian Roldan',nation:'USA',flag:'🇺🇸',pos:'CM'}
+  ],
+  'portland': [
+  {name:'Santiago Moreno',nation:'Colombia',flag:'🇨🇴',pos:'RW'},
+  {name:'David Ayala',nation:'USA',flag:'🇺🇸',pos:'CM'}
+  ],
+  'nycfc': [
+  {name:'Hannes Wolf',nation:'Austria',flag:'🇦🇹',pos:'CM'},
+  {name:'Santi Castillo',nation:'USA',flag:'🇺🇸',pos:'ST'}
+  ],
+  'galaxy': [
+  {name:'Riqui Puig',nation:'Spain',flag:'🇪🇸',pos:'CAM'},
+  {name:'Joseph Paintsil',nation:'Ghana',flag:'🇬🇭',pos:'RW'},
+  {name:'John Nelson',nation:'USA',flag:'🇺🇸',pos:'CB'}
+  ],
+  'columbus': [
+  {name:'Cucho Hernández',nation:'Colombia',flag:'🇨🇴',pos:'ST'},
+  {name:'Aidan Morris',nation:'USA',flag:'🇺🇸',pos:'CM'},
+  {name:'Alexandru Matan',nation:'Romania',flag:'🇷🇴',pos:'RW'}
+  ],
+};
+
 let currentLeague = 'all';
 
 function init() {
@@ -768,6 +1083,18 @@ function openClubModal(id) {
   setModalHeader(t.color, logo, t.name, lname + ' · ' + t.city + ' · Est. ' + t.founded);
   const ph = document.getElementById('modal-logo-ph');
   ph.style.background = t.color + '22'; ph.style.color = t.color; ph.style.fontSize = '22px'; ph.textContent = t.abbr.slice(0,3);
+  const wcP = WC_PLAYERS[t.id] || [];
+  const wcSection = wcP.length ? `
+    <div class="msec"><div class="msec-title">2026 World Cup Players</div>
+      <div class="wc-players-grid">
+        ${wcP.map(p => `<div class="wc-player-row">
+          <span class="wc-player-flag">${p.flag}</span>
+          <span class="wc-player-name">${p.name}</span>
+          <span class="wc-player-nation">${p.nation}</span>
+          <span class="wc-player-pos">${p.pos}</span>
+        </div>`).join('')}
+      </div>
+    </div>` : '';
   document.getElementById('modal-body').innerHTML = `
     <div class="msec"><div class="msec-title">Club Facts</div>
       <div class="facts-grid">
@@ -776,7 +1103,8 @@ function openClubModal(id) {
         <div class="fact-box"><div class="fact-val">${t.legend.split(' ').slice(-1)[0]}</div><div class="fact-lbl">Legend</div></div>
       </div></div>
     <div class="msec"><div class="msec-title">About</div><div class="mdesc">${t.desc}</div></div>
-    <div class="msec"><div class="msec-title">Honours</div><div class="mdesc">${t.trophies}</div></div>`;
+    <div class="msec"><div class="msec-title">Honours</div><div class="mdesc">${t.trophies}</div></div>
+    ${wcSection}`;
   openModal();
 }
 

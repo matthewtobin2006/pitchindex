@@ -282,6 +282,52 @@ body::before {
   padding:3px 7px; border-radius:3px;
   background:rgba(0,212,170,0.12); border:1px solid rgba(0,212,170,0.25); color:var(--accent);
 }
+
+/* Home group grid */
+#home-group-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+.home-group-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  transition: border-color .2s, box-shadow .2s;
+}
+.home-group-card:hover { border-color: var(--border2); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+.home-group-hdr {
+  padding: 9px 14px;
+  font-family: var(--font-display);
+  font-size: 15px;
+  letter-spacing: 0.1em;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.home-group-hdr-letter { color: var(--accent); }
+.home-group-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  cursor: pointer;
+  transition: background .15s;
+}
+.home-group-row:hover { background: rgba(255,255,255,0.05); }
+.home-group-row:last-child { border-bottom: none; }
+.hgr-flag { font-size: 17px; flex-shrink: 0; line-height: 1; }
+.hgr-name { font-size: 12px; font-weight: 500; flex: 1; }
+.hgr-badge {
+  font-size: 8px; font-weight: 700; letter-spacing: 0.1em;
+  padding: 2px 6px; border-radius: 3px; text-transform: uppercase; white-space: nowrap;
+}
+.hgr-badge-gold { background: rgba(245,200,66,0.15); border: 1px solid rgba(245,200,66,0.3); color: var(--gold); }
+.hgr-badge-muted { font-size: 9px; color: var(--muted); font-weight: 500; }
 </style>
 </head>
 <body>
@@ -326,6 +372,8 @@ body::before {
           <div class="woc-arrow">→</div>
         </div>
       </div>
+      <div class="section-label" style="margin-top:28px;">Groups — All 12</div>
+      <div id="home-group-grid"></div>
     </div>
   </div>
 
@@ -966,8 +1014,31 @@ const WC_PLAYERS = {
 
 let currentLeague = 'all';
 
+
+function renderHomeGroups() {
+  const grid = document.getElementById('home-group-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  WC_GROUPS.forEach(g => {
+    const card = document.createElement('div');
+    card.className = 'home-group-card';
+    card.innerHTML = `<div class="home-group-hdr"><span class="home-group-hdr-letter">Group ${g.group}</span></div>` +
+      g.teams.map(t => `
+        <div class="home-group-row" onclick="openNationModal('${g.group}','${t.name.replace(/'/g,"\\'")}')">
+          <span class="hgr-flag">${t.flag}</span>
+          <span class="hgr-name">${t.name}</span>
+          ${t.titles > 0
+            ? `<span class="hgr-badge hgr-badge-gold">🏆${t.titles}×</span>`
+            : `<span class="hgr-badge-muted">${t.best.replace('CHAMPIONS ','').replace('Quarterfinals','QF').replace('Semifinals','SF').replace('Runners-Up','RU').replace('3rd Place','3rd').replace('Group Stage','GS').replace('Round of 16','R16').replace('First appearance 2026','Debut')}</span>`
+          }
+        </div>`).join('');
+    grid.appendChild(card);
+  });
+}
+
 function init() {
   renderHomeLeagueCards();
+  renderHomeGroups();
   renderLeagueBar();
   renderTeams();
   renderWCGroups();

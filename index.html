@@ -1255,27 +1255,21 @@ function setLeague(id) {
 
 function espnLogo(abbr) {
   const map = {
-    // EPL
-    'ARS':'ars','LIV':'liv','MCI':'mci','MUN':'man','CHE':'che','TOT':'tot','AVL':'avl','NEW':'new','BHA':'bha','WHU':'whu',
-    'WOL':'wlv','EVE':'everton','BRE':'brentford','FUL':'fulham','CRY':'palace','NFO':'nfore','BOU':'bmouth','LEI':'leic','IPS':'ipswich','SOU':'soton',
-    // La Liga
-    'RMA':'rea','BAR':'bar','ATM':'atm','SEV':'sev','VIL':'vil','ATH':'ath',
-    'BET':'betis','RSO':'rso','VAL':'val','GET':'getafe','OSA':'osasuna','CEL':'celta','RCD':'mallorca','GIR':'girona','ALA':'alaves','ESP':'espanyol','LEG':'leganes','VVD':'vvd','UDL':'laspalmas','RAY':'rayo',
-    // Bundesliga
-    'BAY':'bay','BVB':'bor','B04':'b04','RBL':'rbl','SGE':'sef','BMG':'bmg',
-    'WOB':'wolfsburg','VFB':'stuttgart','TSG':'hoffenheim','SCF':'freiburg','M05':'mainz','FCA':'augsburg','FCU':'union-berlin','SVW':'werder','BOC':'bochum','FCH':'heidenheim','KIE':'kiel','STP':'stpauli',
-    // Serie A
-    'JUV':'juv','INT':'int','MIL':'mil','NAP':'nap','ROM':'rom','LAZ':'laz',
-    'FIO':'fior','ATA':'ata','TOR':'tor','BOL':'bol','UDI':'udinese','GEN':'genoa','SAM':'samp','CAG':'cagliari','HEL':'verona','EMP':'empoli','PAR':'parma','ACM':'monza','LEC':'lecce','VFC':'venezia',
-    // Ligue 1
-    'PSG':'psg','OM':'mar','OL':'oly','ASM':'mon','OGCN':'nice','LOSC':'lil',
-    'RCL':'lens','SRF':'rennes','FCN':'nantes','TFC':'toulouse','MHSC':'montpellier','SB29':'brest','RCS':'strasbourg','SDR':'reims','HAC':'havre','AJA':'auxerre','SCO':'angers','ASSE':'saintetienne',
-    // MLS
-    'LAFC':'lafc','MIA':'inter-miami','ATL':'atl-utd','SEA':'seat','POR':'por','NYC':'nycfc','LAG':'la','CLB':'clb',
-    'RBNY':'rbny','SKC':'skc','DCU':'dc','CHI':'chi','NE':'ne','COL':'col','DAL':'fc-dallas','HOU':'hou','RSL':'rsl','MIN':'min','TOR':'tor','MTL':'mtl','VAN':'van','ORL':'orl','NSH':'nsh','CLT':'clt','ATX':'atx','STL':'stl','SJE':'sj','FCC':'cin','PHI':'phi'
+    'ARS':359,'LIV':364,'MCI':382,'MUN':360,'CHE':363,'TOT':367,'AVL':362,'NEW':361,'BHA':331,'WHU':371,
+    'WOL':380,'EVE':368,'BRE':337,'FUL':370,'CRY':384,'NFO':393,'BOU':349,'LEI':375,'IPS':357,'SOU':376,
+    'RMA':86,'BAR':83,'ATM':1068,'SEV':243,'VIL':102,'ATH':93,
+    'BET':244,'RSO':89,'VAL':94,'GET':9812,'OSA':97,'CEL':95,'RCD':101,'GIR':9906,'ALA':9907,'ESP':245,'LEG':9813,'VVD':246,'UDL':9908,'RAY':9909,
+    'BAY':132,'BVB':124,'B04':131,'RBL':11420,'SGE':9823,'BMG':130,
+    'WOB':135,'VFB':133,'TSG':11419,'SCF':9906,'M05':128,'FCA':9824,'FCU':11421,'SVW':136,'BOC':125,'FCH':11806,'KIE':11807,'STP':9825,
+    'JUV':157,'INT':153,'MIL':156,'NAP':163,'ROM':158,'LAZ':160,
+    'FIO':154,'ATA':150,'TOR':166,'BOL':151,'UDI':167,'GEN':155,'SAM':164,'CAG':152,'HEL':168,'EMP':11380,'PAR':161,'ACM':11808,'LEC':11381,'VFC':11809,
+    'PSG':174,'OM':176,'OL':175,'ASM':179,'OGCN':178,'LOSC':177,
+    'RCL':9826,'SRF':9827,'FCN':180,'TFC':9828,'MHSC':9829,'SB29':11422,'RCS':9830,'SDR':9831,'HAC':11423,'AJA':9832,'SCO':9833,'ASSE':173,
+    'LAFC':19333,'MIA':20232,'ATL':18054,'SEA':9473,'POR':9480,'NYC':18085,'LAG':392,'CLB':395,
+    'RBNY':399,'SKC':398,'DCU':394,'CHI':396,'NE':401,'COL':397,'DAL':9737,'HOU':9740,'RSL':9741,'MIN':19738,'TOR':9742,'MTL':9739,'VAN':9744,'ORL':20183,'NSH':20476,'CLT':20477,'ATX':20480,'STL':21226,'SJE':400,'FCC':21227,'PHI':9743
   };
-  const code = map[abbr];
-  return code ? `https://a.espncdn.com/i/teamlogos/soccer/500/${code}.png` : null;
+  const id = map[abbr];
+  return id ? `https://a.espncdn.com/i/teamlogos/soccer/500/${id}.png` : null;
 }
 
 function renderTeams() {
